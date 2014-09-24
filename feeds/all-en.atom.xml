@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>A Pelican Blog</title><link href="http://bcapozzi88.github.io/" rel="alternate"></link><link href="http://bcapozzi88.github.io/feeds/all-en.atom.xml" rel="self"></link><id>http://bcapozzi88.github.io/</id><updated>2014-09-23T00:00:00Z</updated><entry><title>My Test Post</title><link href="http://bcapozzi88.github.io/my-test-post.html" rel="alternate"></link><updated>2014-09-23T00:00:00Z</updated><author><name>Brian Capozzi</name></author><id>tag:bcapozzi88.github.io,2014-09-23:my-test-post.html</id><summary type="html">&lt;h1&gt;My Test Post&lt;/h1&gt;
+&lt;p&gt;Hopefully this works&lt;/p&gt;</summary></entry></feed>
