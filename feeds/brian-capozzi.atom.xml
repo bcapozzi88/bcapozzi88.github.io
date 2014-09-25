@@ -10,11 +10,11 @@
 &lt;/ul&gt;
 &lt;h2&gt;Web Scraping 101&lt;/h2&gt;
 &lt;p&gt;Before attempting to answer any of the above questions, we need to actually get some data off of Rex's blog. The home page on the blog looks something like this:&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Rex's Blog" src="{Rex_blogshot.png}/images/Rex_blogshot.png" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Rex's Blog" src="/images/Rex_blogshot.png" /&gt;&lt;/p&gt;
 &lt;p&gt;It displays the current day's crossword puzzle. The link to a given day's crossword puzzle looks something like this: &lt;a href="http://rexwordpuzzle.blogspot.com/2014/09/snowman-in-disneys-frozen-tue-9-23-14.html"&gt;http://rexwordpuzzle.blogspot.com/2014/09/snowman-in-disneys-frozen-tue-9-23-14.html&lt;/a&gt;, with the date towards the end of the url. There is a lot going on on each page of Rex's blog-- there are lots of links, images, and text extraneous to the body of the day's post. The information that I would like to collect from each page is the puzzle date, the body of the blog post (which also contains constructor, difficulty, and theme), and the link to the prior day's puzzle.&lt;/p&gt;
 &lt;h3&gt;Beautiful Soup&lt;/h3&gt;
 &lt;p&gt;To start, we can get a feel for what the underlying HTML of Rex's blog looks like:&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Rex's HTML" src="{Rex_HTML.png}/images/Rex_HTML.png" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Rex's HTML" src="/images/Rex_HTML.png" /&gt;&lt;/p&gt;
 &lt;p&gt;In order to begin playing around, we can open the webpage using Python's urllib2 library, and convert the file to a BeautifulSoup object, giving us a 'beautiful' (oh no), nested structure to work with.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;bs4&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;BeautifulSoup&lt;/span&gt;
 &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;urllib2&lt;/span&gt;
