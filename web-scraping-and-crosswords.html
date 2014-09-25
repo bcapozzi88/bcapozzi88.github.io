@@ -63,6 +63,9 @@
       </header>
       <div class="entry-content">
 <footer class="post-info">
+    <address class="vcard author">
+        by <a class="url fn" href="/author/brian-capozzi.html">Brian Capozzi</a>
+    </address>
 
     in <a href="/category/posts.html">Posts</a>
 
@@ -74,7 +77,8 @@
     
 </footer><!-- /.post-info -->
 
-        <p>I love crossword puzzles. I do the New York Times crossword puzzle almost every day-- though, I don't actually finish it every day. The puzzle difficulty ramps up as the week progresses, with Monday being the easiest, Saturday being the toughest, and Sunday being a larger puzzle at a Wednesday/Thursday-ish difficulty. Sunday through Thursday puzzles also generally have some sort of theme, while Friday and Saturday puzzles are unthemed. I can usually complete puzzles through Thursday difficulty, occassionally I can finish a Friday puzzle, but I've never even come close to finishing a Saturday.</p>
+        <hr />
+<p>I love crossword puzzles. I do the New York Times crossword puzzle almost every day-- though, I don't actually finish it every day. The puzzle difficulty ramps up as the week progresses, with Monday being the easiest, Saturday being the toughest, and Sunday being a larger puzzle at a Wednesday/Thursday-ish difficulty. Sunday through Thursday puzzles also generally have some sort of theme, while Friday and Saturday puzzles are unthemed. I can usually complete puzzles through Thursday difficulty, occassionally I can finish a Friday puzzle, but I've never even come close to finishing a Saturday.</p>
 <p>Rex Parker, the 63rd greatest crossword solver in the universe, has a blog, <a href="http://rexwordpuzzle.blogspot.com">Rex Parker Does the NY Times Crossword Puzzle</a> where he documents each puzzle's constructor and theme, assigns a relative difficulty to the puzzle, and writes his thoughts on the puzzle's fill. I really enjoy reading it, so this seemed like a fun place to get my feet wet learning to web scrape using Python. In particular, there are a few questions that I thought might be interesting to answer, such as:</p>
 <ul>
 <li>Who has created the most NYT crosswords?</li>
@@ -84,7 +88,7 @@
 </ul>
 <h2>Web Scraping 101</h2>
 <p>Before attempting to answer any of the above questions, we need to actually get some data off of Rex's blog. The home page on the blog looks something like this:</p>
-<p><img alt="" src="" /></p>
+<p><img alt="" src="https://github.com/bcapozzi88/bcapozzi88.github.io/blob/master/images/Rex_blogshot.png" /></p>
 <p>It displays the current day's crossword puzzle. The link to a given day's crossword puzzle looks something like this: <a href="http://rexwordpuzzle.blogspot.com/2014/09/snowman-in-disneys-frozen-tue-9-23-14.html">http://rexwordpuzzle.blogspot.com/2014/09/snowman-in-disneys-frozen-tue-9-23-14.html</a>, with the date towards the end of the url. There is a lot going on on each page of Rex's blog-- there are lots of links, images, and text extraneous to the body of the day's post. The information that I would like to collect from each page is the puzzle date, the body of the blog post (which also contains constructor, difficulty, and theme), and the link to the prior day's puzzle.</p>
 <h3>Beautiful Soup</h3>
 <p>To start, we can get a feel for what the underlying HTML of Rex's blog looks like:</p>
