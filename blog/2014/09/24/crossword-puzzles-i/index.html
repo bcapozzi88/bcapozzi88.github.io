@@ -66,8 +66,8 @@
                 <li><a href="/pages/about-me.html">About Me</a></li>
                           <li class="divider-vertical"></li>
                   <li class="active">
-                    <a href="/category/posts.html">
-						<i class="icon-folder-open icon-large"></i>Posts
+                    <a href="/category/data-posts.html">
+						<i class="icon-folder-open icon-large"></i>Data Posts
 					</a>
                   </li>
 
@@ -106,12 +106,12 @@
 <span class="label">By</span>
 <a href="/author/brian-capozzi.html"><i class="icon-user"></i>Brian Capozzi</a>
 <span class="label">Category</span>
-<a href="/category/posts.html"><i class="icon-folder-open"></i>Posts</a>.
+<a href="/category/data-posts.html"><i class="icon-folder-open"></i>Data Posts</a>.
 
 
 </footer><!-- /.post-info -->                </div>
                 <hr />
-<p>I love crossword puzzles. I do the New York Times crossword puzzle almost every day-- though, I don't actually finish it every day. The puzzle difficulty ramps up as the week progresses, with Monday being the easiest, Saturday being the toughest, and Sunday being a larger puzzle at a Wednesday/Thursday-ish difficulty. Sunday through Thursday puzzles also generally have some sort of theme, while Friday and Saturday puzzles are unthemed. I can usually complete puzzles through Thursday difficulty, occassionally I can finish a Friday puzzle, but I've never even come close to finishing a Saturday.</p>
+<p>I love crossword puzzles. I do the <a href="http://www.nytimes.com/crosswords/index.html">New York Times crossword puzzle</a> almost every day-- though, I don't actually finish it every day. The puzzle difficulty ramps up as the week progresses, with Monday being the easiest, Saturday being the toughest, and Sunday being a larger puzzle at a Wednesday/Thursday-ish difficulty. Sunday through Thursday puzzles also generally have some sort of theme, while Friday and Saturday puzzles are unthemed. I can usually complete puzzles through Thursday difficulty, occassionally I can finish a Friday puzzle, but I've never even come close to finishing a Saturday.</p>
 <p>Rex Parker, the 63rd greatest crossword solver in the universe, has a blog, <a href="http://rexwordpuzzle.blogspot.com">Rex Parker Does the NY Times Crossword Puzzle</a> where he documents each puzzle's constructor and theme, assigns a relative difficulty to the puzzle, and writes his thoughts on the puzzle's fill. I really enjoy reading it, so this seemed like a fun place to get my feet wet learning to web scrape using Python. In particular, there are a few questions that I thought might be interesting to answer, such as:</p>
 <ul>
 <li>Who has created the most NYT crosswords?</li>
@@ -121,12 +121,12 @@
 </ul>
 <h2>Web Scraping 101</h2>
 <p>Before attempting to answer any of the above questions, we need to actually get some data off of Rex's blog. The home page on the blog looks something like this:</p>
-<p><img alt="Rex's Blog" src="/images/Rex_blogshot.png" width="300" height="300"></p>
-<p>It displays the current day's crossword puzzle. The link to a given day's crossword puzzle looks something like this: <a href="http://rexwordpuzzle.blogspot.com/2014/09/snowman-in-disneys-frozen-tue-9-23-14.html">http://rexwordpuzzle.blogspot.com/2014/09/snowman-in-disneys-frozen-tue-9-23-14.html</a>, with the date towards the end of the url. There is quite a bit going on around each page of Rex's blog-- there are lots of links, images, and text extraneous to the body of the day's post. The information that I would like to collect from each page is the puzzle date, the body of the blog post (which also contains constructor, difficulty, and theme), and the link to the prior day's puzzle.</p>
+<p><img alt="Rex's Blog" src="/images/Rex_blogshot.png" width="400" height="400"></p>
+<p>It displays an image of the the current day's completed crossword puzzle.  There is quite a bit going on around each page of Rex's blog-- there are lots of links, images, and text extraneous to the body of the day's post. The information that I would like to collect from each page is the puzzle date, the body of the blog post (which also contains constructor, difficulty, and theme), and the link to the prior day's puzzle.</p>
 <h3>BeautifulSoup</h3>
 <p>To start, we can get a feel for what the underlying HTML of Rex's blog looks like:</p>
-<p><img alt="Rex's HTML" src="/images/Rex_HTML.png" width="300" height="300"></p>
-<p>In order to begin playing around, we can open the webpage using Python's urllib2 library, and convert the file to a BeautifulSoup object, giving us a 'beautiful' (oh no), nested structure to work with.</p>
+<p><img alt="Rex's HTML" src="/images/Rex_HTML.png" width="500" height="500"></p>
+<p>In order to begin playing around, we can open the webpage using Python's urllib2 library, and convert the file to a <a href="http://www.crummy.com/software/BeautifulSoup/bs4/doc/">BeautifulSoup</a> object, giving us a 'beautiful' (oh no), nested structure to work with.</p>
 <div class="highlight"><pre><span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
 <span class="kn">import</span> <span class="nn">urllib2</span>
 
@@ -160,7 +160,7 @@ Similarly, the entirety of the post body can be found starting with a line that 
 
 
 <h3>Crawling Through Pages</h3>
-<p>Rex's blog has around 3000 crossword puzzle pages, and we'd like to scrape data off of each of them. We can easily find what we want on each page, but now we need to write a little function to crawl through each page and pull out the above data. In order to do this, we need to be able to find the link to the prior post on each page. Unfortunately, Rex's link format has changed over his years of posting (as has his post-body format, which is why I took that all as one chunk for each page), so it's a bit difficult to just search by date for the link to the prior post. Thankfully, at the bottom of each page is a link titled "Older Post", which easily takes us where we want to go. Links can be found within a page's <code>&lt;a&gt;</code> tags, with the links as the 'href' attribute. The "Older Post" link has class_='blog-pager-older-link'), so we can find the link by</p>
+<p>Rex's blog has around 3000 crossword puzzle pages, and we'd like to scrape data off of each of them. We can easily find what we want on each page, but now we need to write a little function to crawl through each page and pull out the above data. In order to do this, we need to be able to find the link to the prior post on each page. Unfortunately, Rex's link format has changed over his years of posting (as has his post-body format, which is why I took that all as one chunk for each page), so it's a bit difficult to just search by date for the link to the prior post. In fact, the link to each puzzle looks something like this: <a href="http://rexwordpuzzle.blogspot.com/2014/09/snowman-in-disneys-frozen-tue-9-23-14.html">http://rexwordpuzzle.blogspot.com/2014/09/snowman-in-disneys-frozen-tue-9-23-14.html</a>, with the date towards the end of the url. Thankfully, at the bottom of each page is a link titled "Older Post", which easily takes us where we want to go. Links can be found within a page's <code>&lt;a&gt;</code> tags, with the links as the 'href' attribute. The "Older Post" link has class_='blog-pager-older-link'), so we can find the link by</p>
 <div class="highlight"><pre><span class="n">page_line</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="n">class_</span><span class="o">=</span><span class="s">&#39;blog-pager-older-link&#39;</span><span class="p">)</span>
 <span class="n">next_page</span> <span class="o">=</span> <span class="n">page_line</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;href&#39;</span><span class="p">)</span>
 </pre></div>
@@ -259,8 +259,8 @@ which would cause my code to quit. The try/except syntax enables the code to kee
 
 <li class="nav-header"><h4><i class="icon-folder-close icon-large"></i>Categories</h4></li>
 <li>
-<a href="/category/posts.html">
-    <i class="icon-folder-open icon-large"></i>Posts
+<a href="/category/data-posts.html">
+    <i class="icon-folder-open icon-large"></i>Data Posts
 </a>
 </li>
 
