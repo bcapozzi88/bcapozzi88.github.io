@@ -21,7 +21,7 @@
         <link rel="stylesheet" href="/theme/css/bootstrap.min.css" type="text/css"/>
     <link href="/theme/css/font-awesome.min.css" rel="stylesheet">
 
-    <link href="/theme/css/pygments/native.css" rel="stylesheet">
+    <link href="/theme/css/pygments/default.css" rel="stylesheet">
     <link rel="stylesheet" href="/theme/css/style.css" type="text/css"/>
 
 
@@ -1564,7 +1564,7 @@ table.dataframe th, td {
 <div class="text_cell_render border-box-sizing rendered_html">
 <hr>
 <p>Last time, we scraped <a href="wordpuzzle.blogspot.com">Rex Parker's New York Times crossword puzzle blog</a>. Now that we've collected the information, we can comb through it and see if we can learn anything. In this post, I'm going to make use of <a href="http://pandas.pydata.org/">pandas</a> to handle the analysis, mostly because it's a package that I wanted to learn how to use. So, this post serves as both an exploratory analysis of the data collected in the last post and as a walkthrough of simple pandas commands for both cleaning the data and examining it. </p>
-<p>This is also my first attempt at encorporating an Ipython Notebook in my blog (see end of entry for a bit more detail on this-- it took a bit playing around and googling for help). </p>
+<p>This is also my first attempt at incorporating an Ipython Notebook in my blog (see end of entry for a bit more detail on this-- it took a bit playing around and googling for help). </p>
 <p>To start, we can load our csv from last time into a pandas dataframe object to inspect the information we obtained last time. </p>
 </hr></div>
 </div>
@@ -2280,7 +2280,7 @@ dtype: int64
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <hr>
-<p>We can also use boolean indexing in pandas to pick out only certain rows from the dataframe. For instance, we can find all days where Patrick berry is the constructor, and then see how many puzzles he has created on each day of the week:</p>
+<p>We can also use boolean indexing in pandas to pick out only certain rows from the dataframe. For instance, we can find all days where Patrick Berry is the constructor, and then see how many puzzles he has created on each day of the week:</p>
 <hr>
 </hr></hr></div>
 </div>
@@ -2507,7 +2507,8 @@ dtype: int64
 <p>This can be made a bit more visually pleasing by using the <a href="http://matplotlib.org/">matplotlib</a> library to construct a bar graph. I'm used to using <a href="http://www.wavemetrics.com/products/igorpro/igorpro.htm">IgorPro</a> for any sort of data visualization, which has a really nice GUI for plotting. I still have a tough time getting used to matplotlib (it takes me forever to make a plot the way I would like it), but I was finally able to produce this</p>
 <p><img alt="Gender" height="400" src="/images/Genders_vs_day.png" width="400" /></p>
 <hr>
-<p>Yikes. There really is dearth of female constructors for the unthemed Friday and Saturday puzzles. In the past 5 years, only 17 Satruday puzzles were made by women and we can check out how spread out these puzzles are (I'm also not entirely sure that 'Xan' is female):</p>
+<p>Yikes. There really is dearth of female constructors for the unthemed Friday and Saturday puzzles. In the past 5 years, only 17 Saturday puzzles were made by women and we can check out how spread out these puzzles are (I'm also not entirely sure that 'Xan' is female):</p>
+<p><strong>Update</strong> Neither Mel Rosen nore Xan Vongsathorn are women, so I need to update my analysis</p>
 <hr>
 </hr></hr></hr></div>
 </div>
@@ -2867,5 +2868,22 @@ In [22]:
 <!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
 <script src="/theme/js/respond.min.js"></script>
 
+    <!-- Google Analytics -->
+    <script type="text/javascript">
+
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-55245722-1']);
+        _gaq.push(['_trackPageview']);
+
+        (function () {
+            var ga = document.createElement('script');
+            ga.type = 'text/javascript';
+            ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+    <!-- End Google Analytics Code -->
 </body>
 </html>

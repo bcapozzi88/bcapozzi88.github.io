@@ -2,6 +2,10 @@ body {
     padding-top: 70px;
 }
 
+.navbar-brand {
+    font-size:22.5px;
+}
+
 #sidebar .list-group, #sidebar .list-group-item {
     background-color: transparent;
 }
@@ -51,6 +55,7 @@ body {
     -moz-hyphens: auto;
     -ms-hyphens: auto;
     hyphens: auto;
+
 }
 
 #sidebar a {
@@ -66,10 +71,21 @@ body {
 #sidebar #social i {
     margin-right: 3px;
 }
+h1 a{color:inherit;}
+h2 a {color:inherit;}
 
-a, a:hover {
-    color: inherit;
+.summary a:link {
+    color: #B1B1D1; text-decoration: none;
 }
+
+.summary a:hover {
+    color: #B1B1D1; text-decoration:underline;
+}
+
+.summary a:visited{
+    color:#B1B1D1; text-decoration: none;
+}
+
 
 .entry-content a {
     text-decoration: none;
