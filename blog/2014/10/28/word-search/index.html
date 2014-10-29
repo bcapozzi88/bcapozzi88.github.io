@@ -2,7 +2,7 @@
 <html lang="en"
 >
 <head>
-    <title>Welcome Post - Brian Capozzi</title>
+    <title>Word Search - Brian Capozzi</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -10,10 +10,10 @@
 
 
 
-<link rel="canonical" href="/blog/2014/09/23/welcome-post/">
+<link rel="canonical" href="/blog/2014/10/28/word-search/">
 
         <meta name="author" content="Brian Capozzi" />
-        <meta name="description" content="The site is alive!" />
+        <meta name="description" content="A simple program for creating a word search grid." />
 
 
 
@@ -45,10 +45,10 @@ Brian Capozzi            </a>
                          <li><a href="/pages/about-me.html">
                              About Me
                           </a></li>
-                        <li class="active">
+                        <li >
                             <a href="/category/data-posts.html">Data posts</a>
                         </li>
-                        <li >
+                        <li class="active">
                             <a href="/category/fun-and-games.html">Fun and games</a>
                         </li>
             </ul>
@@ -75,10 +75,10 @@ Brian Capozzi            </a>
         <article>
             <header class="page-header">
                 <h1>
-                    <a href="/blog/2014/09/23/welcome-post/"
+                    <a href="/blog/2014/10/28/word-search/"
                        rel="bookmark"
-                       title="Permalink to Welcome Post">
-                        Welcome Post
+                       title="Permalink to Word Search">
+                        Word Search
                     </a>
                 </h1>
             </header>
@@ -88,7 +88,7 @@ Brian Capozzi            </a>
 <footer class="post-info">
     <span class="label label-default">Date</span>
     <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2014-09-23T00:00:00"> Tue 23 September 2014</time>
+        <i class="fa fa-calendar"></i><time datetime="2014-10-28T00:00:00"> Tue 28 October 2014</time>
     </span>
 
 
@@ -97,13 +97,9 @@ Brian Capozzi            </a>
 </footer><!-- /.post-info -->                    </div>
                 </div>
                 <hr />
-<p>I've hopped on the bandwagon and created a blog to discuss coding and data related projects that I've recently started working on. I think this is a nice way to aggregate things that I've learned, and the blog format also offers the (small) possibility that others may find interesting reading material.</p>
-<p>I've created this blog using a combination of <a href="http://docs.getpelican.com/en/3.4.0/index.html">Pelican</a>, <a href="http://daringfireball.net/projects/markdown/">Markdown</a>, and <a href="https://pages.github.com">GitHub Pages</a>. Pelican is written primarily in Python, and is a fairly easy to use static site generator, geared towards blogging, which conveniently lets you write content using Markdown. Since I have no html experience, Markdown is ideal since it allows one to type web content using simple syntax, and have the content automatically converted to html. GitHub pages offers freely posted and easily hosted webpages.</p>
-<p>I primarily used the two sites below (along with the three links above) as reference for making this blog. They both have easily readable instructions for getting everything up and running.</p>
-<ul>
-<li><a href="http://martinbrochhaus.com/pelican2.html">http://martinbrochhaus.com/pelican2.html</a></li>
-<li><a href="http://openjerseycity.org/blog/technical/2014/06/20/Pelican-On-GitHub-Pages/">http://openjerseycity.org/blog/technical/2014/06/20/Pelican-On-GitHub-Pages/</a></li>
-</ul>
+<h2>Word Search</h2>
+<p>I thought it might be fun to try and write a program that somehow generates a crossword puzzle (or at least assists in creating one). This seemed like a pretty involved task, so a friend suggested I first start with a much simpler task: creating a word search. I finally got around to implementing this, and the first version can be found on my github at <a href="https://github.com/bcapozzi88/Word_Search">https://github.com/bcapozzi88/Word_Search</a>.</p>
+<p>This was basically just fun for me, but it got me thinking about how to go about creating and populating a grid with words, while being mindful of potential intersections between words. It also got me to use python's 'random' package for randomly deciding such factors as whether words should appear horizontally or vertically, and whether they should be placed in the grid from start to end or end to start. After placing all the words from the user-defined word-list, the program then fills in the remaining squares with random letters (though I guess to ramp up the difficulty, it should only use letters that appear in the words from the word-list). Once finished, the program then prints the completed word search.</p>
             </div>
             <!-- /.entry-content -->
         </article>
