@@ -106,7 +106,7 @@ Brian Capozzi            </a>
 Here, <span class="math">\(h_\theta (x)\)</span>, is the predicted asking price of the house and <span class="math">\(x\)</span> is the house's area. Determing the <span class="math">\(\theta\)</span> parameters which allow the hypothesis to best fit the training data will then allow us to predict what the asking price of any other house on the market should be based on the size of the house (should the model work).</p>
 <p>In order to work with the linear regression model, we can definte a cost function, <span class="math">\(J\)</span>, which tells us the error between the results of our current hypothesis and the actual values that should be output. Typically, <span class="math">\(J\)</span> is chosen to be the square error of the difference between the predicted and actual values:
 <div class="math">$$ J(\theta_0 , \theta_1) = \dfrac{1}{2m} \sum\limits_{i=1}^m (h_\theta (x^i) - y^i)^2 $$</div>
-The summation runs over all <span class="math">\(m\)</span> training examples, and sums the square error contributions for each example, <span class="math">\(i\)</span>. In minimizing this function with respect to <span class="math">\(\theta_0\)</span> and <span class="math">\(t\heta_1\)</span>, we can determine the hypothesis which best fits our data.</p>
+The summation runs over all <span class="math">\(m\)</span> training examples, and sums the square error contributions for each example, <span class="math">\(i\)</span>. In minimizing this function with respect to <span class="math">\(\theta_0\)</span> and <span class="math">\(\theta_1\)</span>, we can determine the hypothesis which best fits our data.</p>
 <p>This minimization can be accomplished using the gradient descent technique, in which we essentially choose a starting point in the space of <span class="math">\(J\)</span> and look for the fastest place to move downhill. We then take a step of some size in this direction, and repeat the procedure until we reach a minimum. To compute the gradient of <span class="math">\(J\)</span>, we simply consider the partial derivatives:
 <div class="math">$$\dfrac{\partial}{\partial \theta_0} = \dfrac{1}{m} \sum\limits_{i=1}^m (h_\theta (x^i) - y^i)$$</div>
 <div class="math">$$\dfrac{\partial}{\partial \theta_1} = \dfrac{1}{m} \sum\limits_{i=1}^m (h_\theta (x^i) - y^i)x^i$$</div>
@@ -158,7 +158,7 @@ The "learning rate", <span class="math">\(\alpha\)</span>, is used to determine 
 <p>The data as collected is not yet set for running analysis, and quite a bit of clean-up/organizing was necessary. I won't write about the details here, but the cleaned datasets can be found on my github:</p>
 <p>The housing data contains the following information for each listing: Price, Town, Zipcode, Beds, Baths, Days Listed, Area, Year Built, and Lot Size</p>
 <p>The apartment rental data contains a bit less information, but includes: Prices, Beds, Baths, Area, and Location</p>
-<h2>Next Time</h2>
+<h3>Next Time</h3>
 <p>I now have two datasets that I can use to test out some linear regression methods in python. In my next post, I will attempt to use these to find a simple relationship between price and area for housing in Nassau County and in Manhattan.</p>
 <script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
     var mathjaxscript = document.createElement('script');
