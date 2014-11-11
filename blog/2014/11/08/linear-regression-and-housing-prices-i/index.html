@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en"
+>
+<head>
+    <title>Linear Regression & Housing Prices I - Brian Capozzi</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+<link rel="canonical" href="/blog/2014/11/08/linear-regression-and-housing-prices-i/">
+
+        <meta name="author" content="Brian Capozzi" />
+        <meta name="description" content="Linear regression is one of the most simple machine learning techniques. After watching the first few lectures in Andrew Ng&#39;s Machine Learning class, I scraped the web to collect a couple of small housing prices data sets in order to learn how to use linear regression implementations in python." />
+
+
+
+    <!-- Bootstrap -->
+        <link rel="stylesheet" href="/theme/css/bootstrap.min.css" type="text/css"/>
+    <link href="/theme/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="/theme/css/pygments/default.css" rel="stylesheet">
+    <link rel="stylesheet" href="/theme/css/style.css" type="text/css"/>
+
+
+</head>
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="/" class="navbar-brand">
+Brian Capozzi            </a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                         <li><a href="/pages/about-me.html">
+                             About Me
+                          </a></li>
+                        <li class="active">
+                            <a href="/category/data-posts.html">Data posts</a>
+                        </li>
+                        <li >
+                            <a href="/category/fun-and-games.html">Fun and games</a>
+                        </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archives</span></a></li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+
+<!--     <div class="container-fluid">
+<div class="jumbotron">
+    <h1></h1>
+    <p></p>
+</div>
+</div> -->
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9">
+
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="/blog/2014/11/08/linear-regression-and-housing-prices-i/"
+                       rel="bookmark"
+                       title="Permalink to Linear Regression & Housing Prices I">
+                        Linear Regression & Housing Prices I
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2014-11-08T00:00:00"> Sat 08 November 2014</time>
+    </span>
+
+
+
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <hr />
+<p>I have recently been following along on Coursera with the video lectures from <a href="https://class.coursera.org/ml-007">Andrew Ng's Machine Learning</a> class. While I haven't been doing any of the problem sets, I figured it would be a good idea to go ahead and make use of some of the concepts in the course. While introducing linear regression, Andrew Ng frequently refers to the relationship between housing prices and the size of the house. I decided to go ahead an scrape some housing data from the web (specifically obtaining small datasets of housing prices in Nassau County, NY and apartment rent prices in NYC), and see what sort of relation exists between price and area.</p>
+<h2>Quick Summary of Linear Regression</h2>
+<p>The following is a very brief summary of the linear regression lectures from the above course.</p>
+<p>Supervised learning techniques comprise a subset of machine learning techniques in which the "proper answer" is given for each example in the training data-set of interest. Considering the housing prices problem, in the data sets that I will scrape, each example in the set (which is also called a training example) will have an asking price, <span class="math">\(y\)</span>, associated with the square foot-age of the house, <span class="math">\(x\)</span>. Linear regression is a simple example of such a machine learning technique in which the data is modeled using a linear hypothesis with unknown parameters; the parameters are then estimated from the provided data.</p>
+<p>For the housing problem, we will try to model the data using a linear hypothesis of the form
+<div class="math">$$ h_\theta (x) = \theta_0 + \theta_1 x $$</div>
+Here, <span class="math">\( h_\theta (x) $, is the predicted asking price of the house and $x\)</span> is the house's area. Determing the <span class="math">\(\theta\)</span> parameters which allow the hypothesis to best fit the training data will then allow us to predict what the asking price of any other house on the market should be based on the size of the house (should the model work).</p>
+<p>In order to work with the linear regression model, we can definte a cost function, <span class="math">\(J\)</span>, which tells us the error between the results of our current hypothesis and the actual values that should be output. Typically, <span class="math">\(J\)</span> is chosen to be the square error of the difference between the predicted and actual values:
+<div class="math">$$ J(\theta_0 , \theta_1) = \dfrac{1}{2m} \sum\limits_{i=1}^m (h_\theta (x^i) - y^i)^2 $$</div>
+The summation runs over all <span class="math">\(m\)</span> training examples, and sums the square error contributions for each example, <span class="math">\(i\)</span>. In minimizing this function with respect to <span class="math">\(\theta_0\)</span> and <span class="math">\(theta_1\)</span>, we can determine the hypothesis which best fits our data.</p>
+<p>This minimization can be accomplished using the gradient descent technique, in which we essentially choose a starting point in the space of <span class="math">\(J\)</span> and look for the fastest place to move downhill. We then take a step of some size in this direction, and repeat the procedure until we reach a minimum. To compute the gradient of <span class="math">\(J\)</span>, we simply consider the partial derivatives:
+<div class="math">$$\dfrac{partial}{partial \theta_0} = \dfrac{1}{m} \sum\limits{i=1}^m (h_\theta (x^i) - y^i)$$</div>
+<div class="math">$$\dfrac{partial}{partial \theta_1} = \dfrac{1}{m} \sum\limits{i=1}^m (h_\theta (x^i) - y^i)x^i$$</div>
+With this, we need to update the <span class="math">\(\theta\)</span> parameters at each step until convergence as follows:
+<div class="math">$$ \theta_0 :=  \theta_0 - \alpha\dfrac{partial}{partial \theta_0}$$</div>
+<div class="math">$$ \theta_1 :=  \theta_1 - \alpha\dfrac{partial}{partial \theta_1}$$</div>
+The "learning rate", <span class="math">\(\alpha\)</span>, is used to determine how big a step we take each time we update the parameters. It can require a bit of tuning, as too small a value can result in a long time for convergence, and too large a value can result in the algorithm not converging.</p>
+<h2>Scraping &amp; Cleaning Housing Data</h2>
+<p>Now that we know how to apply linear regression, we need some housing data. I didn't put too much effort into searching for existing housing databases, but instead grabbed some data from the web. I grabbed listings off of <a href="www.homes.com">www.homes.com</a> for houses in Nassau County, NY and I used <a href="www.streeteasy.com">www.streeteasy.com</a> to create a dataset of apartment rents in Manhattan.</p>
+<p>To obtain the raw data, I used similar function to my earlier post. I show a snippet here for the homes.com scraping.</p>
+<div class="highlight"><pre><span class="n">startPage</span> <span class="o">=</span> <span class="s">&#39;http://www.homes.com/for-sale/nassau-county-ny/&#39;</span>
+<span class="k">def</span> <span class="nf">crawlHomes</span><span class="p">(</span><span class="n">startPage</span><span class="p">):</span>
+    <span class="c">#Turn start page into soup object. Initiate lists for data collections</span>
+    <span class="n">page</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">startPage</span><span class="p">)</span>
+    <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">page</span><span class="p">)</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="mi">0</span> <span class="c">#keep track of pages crawled</span>
+    <span class="n">attrs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">prices</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">addresses</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c">#Crawl pages until there are none left</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="n">class_</span><span class="o">=</span><span class="s">&#39;next butni&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">):</span>
+
+        <span class="c">#for each page, grab appropriate data</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">soup</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s">&#39;div&#39;</span><span class="p">,</span> <span class="n">class_</span><span class="o">=</span><span class="s">&quot;result-list _listing-result&quot;</span><span class="p">):</span>
+            <span class="n">holder</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">a</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s">&#39;ul&#39;</span><span class="p">,</span> <span class="n">class_</span><span class="o">=</span><span class="s">&quot;attribute-list&quot;</span><span class="p">):</span>
+                <span class="n">holder</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+            <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">holder</span><span class="p">)</span>
+            <span class="n">price</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;div&#39;</span><span class="p">,</span> <span class="n">class_</span><span class="o">=</span><span class="s">&#39;result-price&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+            <span class="n">prices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">price</span><span class="p">)</span>
+            <span class="n">address</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;meta&#39;</span><span class="p">)[</span><span class="s">&#39;content&#39;</span><span class="p">]</span>
+            <span class="n">addresses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">address</span><span class="p">)</span>
+
+        <span class="c">#find link for next webpage</span>
+        <span class="n">next_page</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="n">class_</span><span class="o">=</span><span class="s">&#39;next butni&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;href&#39;</span><span class="p">)</span>
+        <span class="n">next_page</span> <span class="o">=</span> <span class="s">&#39;http://www.homes.com&#39;</span><span class="o">+</span><span class="n">next_page</span>
+        <span class="k">try</span><span class="p">:</span>
+        <span class="c">#open page and convert it to BeautifulSoup object</span>
+          <span class="n">next_page</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">next_page</span><span class="p">)</span>
+          <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">next_page</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">URLError</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+          <span class="k">print</span> <span class="n">error</span>           
+        <span class="n">num</span><span class="o">+=</span><span class="mi">1</span>
+        <span class="k">print</span> <span class="n">num</span> <span class="c">#keep track while program is running</span>
+    <span class="k">return</span> <span class="n">attrs</span><span class="p">,</span> <span class="n">prices</span><span class="p">,</span> <span class="n">addresses</span>
+</pre></div>
+
+
+<p>The data as collected is not yet set for running analysis, and quite a bit of clean-up/organizing was necessary. I won't write about the details here, but the cleaned datasets can be found on my github:</p>
+<p>The housing data contains the following information for each listing: Price, Town, Zipcode, Beds, Baths, Days Listed, Area, Year Built, and Lot Size</p>
+<p>The apartment rental data contains a bit less information, but includes: Prices, Beds, Baths, Area, and Location</p>
+<h2>Next Time</h2>
+<p>I now have two datasets that I can use to test out some linear regression methods in python. In my next post, I will attempt to use these to find a simple relationship between price and area for housing in Nassau County and in Manhattan.</p>
+<script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = '//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
+    mathjaxscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: 'center'," +
+        "    displayIndent: '0em'," +
+        "    showMathMenu: true," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'black ! important'} }" +
+        "    } " +
+        "}); ";
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script>
+            </div>
+            <!-- /.entry-content -->
+        </article>
+    </section>
+
+        </div>
+        <div class="col-sm-3 well well-sm" id="sidebar">
+
+<aside>
+    <section>
+        <ul class="list-group list-group-flush">
+
+
+
+                <li class="list-group-item"><a href="/"><h4><i class="fa fa-tags fa-lg"></i><span class="icon-label">Tags</span></h4></a>
+                    <ul class="list-group " id="tags">
+                    </ul>
+                </li>    
+    <li class="list-group-item"><h4><i class="fa fa-external-link-square fa-lg"></i><span class="icon-label">Links</span></h4>
+      <ul class="list-group" id="links">
+        <li class="list-group-item">
+            <a href="http://www.linkedin.com/in/bcapozzi" target="_blank">
+                LinkedIn
+            </a>
+        </li>
+        <li class="list-group-item">
+            <a href="http://scholar.google.com/citations?hl=en&user=c7drUDYAAAAJ" target="_blank">
+                Google Scholar Profile
+            </a>
+        </li>
+        <li class="list-group-item">
+            <a href="http://www.columbia.edu/~lv2117" target="_blank">
+                Research Group Page
+            </a>
+        </li>
+        <li class="list-group-item">
+            <a href="https://github.com/bcapozzi88" target="_blank">
+                Github
+            </a>
+        </li>
+      </ul>
+    </li>
+
+        </ul>
+    </section>
+
+</aside>        </div>
+    </div>
+</div>
+<footer>
+   <div class="container">
+      <hr>
+      <div class="row">
+         <div class="col-xs-10">&copy; 2014 Brian Capozzi
+            &middot; Powered by <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
+            <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
+            <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
+         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p></div>
+      </div>
+   </div>
+</footer>
+<script src="/theme/js/jquery.min.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/theme/js/bootstrap.min.js"></script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="/theme/js/respond.min.js"></script>
+
+</body>
+</html>

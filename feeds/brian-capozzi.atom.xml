@@ -1,5 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Brian Capozzi</title><link href="/" rel="alternate"></link><link href="/feeds/brian-capozzi.atom.xml" rel="self"></link><id>/</id><updated>2014-10-28T00:00:00-04:00</updated><entry><title>Word Search</title><link href="/blog/2014/10/28/word-search/" rel="alternate"></link><updated>2014-10-28T00:00:00-04:00</updated><author><name>Brian Capozzi</name></author><id>tag:,2014-10-28:blog/2014/10/28/word-search/</id><summary type="html">&lt;hr /&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Brian Capozzi</title><link href="/" rel="alternate"></link><link href="/feeds/brian-capozzi.atom.xml" rel="self"></link><id>/</id><updated>2014-11-08T00:00:00-05:00</updated><entry><title>Linear Regression &amp; Housing Prices I</title><link href="/blog/2014/11/08/linear-regression-and-housing-prices-i/" rel="alternate"></link><updated>2014-11-08T00:00:00-05:00</updated><author><name>Brian Capozzi</name></author><id>tag:,2014-11-08:blog/2014/11/08/linear-regression-and-housing-prices-i/</id><summary type="html">&lt;hr /&gt;
+&lt;p&gt;I have recently been following along on Coursera with the video lectures from &lt;a href="https://class.coursera.org/ml-007"&gt;Andrew Ng's Machine Learning&lt;/a&gt; class. While I haven't been doing any of the problem sets, I figured it would be a good idea to go ahead and make use of some of the concepts in the course. While introducing linear regression, Andrew Ng frequently refers to the relationship between housing prices and the size of the house. I decided to go ahead an scrape some housing data from the web (specifically obtaining small datasets of housing prices in Nassau County, NY and apartment rent prices in NYC), and see what sort of relation exists between price and area.&lt;/p&gt;
+&lt;h2&gt;Quick Summary of Linear Regression&lt;/h2&gt;
+&lt;p&gt;The following is a very brief summary of the linear regression lectures from the above course.&lt;/p&gt;
+&lt;p&gt;Supervised learning techniques comprise a subset of machine learning techniques in which the "proper answer" is given for each example in the training data-set of interest. Considering the housing prices problem, in the data sets that I will scrape, each example in the set (which is also called a training example) will have an asking price, &lt;span class="math"&gt;\(y\)&lt;/span&gt;, associated with the square foot-age of the house, &lt;span class="math"&gt;\(x\)&lt;/span&gt;. Linear regression is a simple example of such a machine learning technique in which the data is modeled using a linear hypothesis with unknown parameters; the parameters are then estimated from the provided data.&lt;/p&gt;
+&lt;p&gt;For the housing problem, we will try to model the data using a linear hypothesis of the form
+&lt;div class="math"&gt;$$ h_\theta (x) = \theta_0 + \theta_1 x $$&lt;/div&gt;
+Here, &lt;span class="math"&gt;\( h_\theta (x) $, is the predicted asking price of the house and $x\)&lt;/span&gt; is the house's area. Determing the &lt;span class="math"&gt;\(\theta\)&lt;/span&gt; parameters which allow the hypothesis to best fit the training data will then allow us to predict what the asking price of any other house on the market should be based on the size of the house (should the model work).&lt;/p&gt;
+&lt;p&gt;In order to work with the linear regression model, we can definte a cost function, &lt;span class="math"&gt;\(J\)&lt;/span&gt;, which tells us the error between the results of our current hypothesis and the actual values that should be output. Typically, &lt;span class="math"&gt;\(J\)&lt;/span&gt; is chosen to be the square error of the difference between the predicted and actual values:
+&lt;div class="math"&gt;$$ J(\theta_0 , \theta_1) = \dfrac{1}{2m} \sum\limits_{i=1}^m (h_\theta (x^i) - y^i)^2 $$&lt;/div&gt;
+The summation runs over all &lt;span class="math"&gt;\(m\)&lt;/span&gt; training examples, and sums the square error contributions for each example, &lt;span class="math"&gt;\(i\)&lt;/span&gt;. In minimizing this function with respect to &lt;span class="math"&gt;\(\theta_0\)&lt;/span&gt; and &lt;span class="math"&gt;\(theta_1\)&lt;/span&gt;, we can determine the hypothesis which best fits our data.&lt;/p&gt;
+&lt;p&gt;This minimization can be accomplished using the gradient descent technique, in which we essentially choose a starting point in the space of &lt;span class="math"&gt;\(J\)&lt;/span&gt; and look for the fastest place to move downhill. We then take a step of some size in this direction, and repeat the procedure until we reach a minimum. To compute the gradient of &lt;span class="math"&gt;\(J\)&lt;/span&gt;, we simply consider the partial derivatives:
+&lt;div class="math"&gt;$$\dfrac{partial}{partial \theta_0} = \dfrac{1}{m} \sum\limits{i=1}^m (h_\theta (x^i) - y^i)$$&lt;/div&gt;
+&lt;div class="math"&gt;$$\dfrac{partial}{partial \theta_1} = \dfrac{1}{m} \sum\limits{i=1}^m (h_\theta (x^i) - y^i)x^i$$&lt;/div&gt;
+With this, we need to update the &lt;span class="math"&gt;\(\theta\)&lt;/span&gt; parameters at each step until convergence as follows:
+&lt;div class="math"&gt;$$ \theta_0 :=  \theta_0 - \alpha\dfrac{partial}{partial \theta_0}$$&lt;/div&gt;
+&lt;div class="math"&gt;$$ \theta_1 :=  \theta_1 - \alpha\dfrac{partial}{partial \theta_1}$$&lt;/div&gt;
+The "learning rate", &lt;span class="math"&gt;\(\alpha\)&lt;/span&gt;, is used to determine how big a step we take each time we update the parameters. It can require a bit of tuning, as too small a value can result in a long time for convergence, and too large a value can result in the algorithm not converging.&lt;/p&gt;
+&lt;h2&gt;Scraping &amp;amp; Cleaning Housing Data&lt;/h2&gt;
+&lt;p&gt;Now that we know how to apply linear regression, we need some housing data. I didn't put too much effort into searching for existing housing databases, but instead grabbed some data from the web. I grabbed listings off of &lt;a href="www.homes.com"&gt;www.homes.com&lt;/a&gt; for houses in Nassau County, NY and I used &lt;a href="www.streeteasy.com"&gt;www.streeteasy.com&lt;/a&gt; to create a dataset of apartment rents in Manhattan.&lt;/p&gt;
+&lt;p&gt;To obtain the raw data, I used similar function to my earlier post. I show a snippet here for the homes.com scraping.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;startPage&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;http://www.homes.com/for-sale/nassau-county-ny/&amp;#39;&lt;/span&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;crawlHomes&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;startPage&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="c"&gt;#Turn start page into soup object. Initiate lists for data collections&lt;/span&gt;
+    &lt;span class="n"&gt;page&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;urllib2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;urlopen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;startPage&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;soup&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;BeautifulSoup&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;page&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;num&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="c"&gt;#keep track of pages crawled&lt;/span&gt;
+    &lt;span class="n"&gt;attrs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[]&lt;/span&gt;
+    &lt;span class="n"&gt;prices&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[]&lt;/span&gt;
+    &lt;span class="n"&gt;addresses&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[]&lt;/span&gt;
+    &lt;span class="c"&gt;#Crawl pages until there are none left&lt;/span&gt;
+    &lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;soup&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;find&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;a&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;class_&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;next butni&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;!=&lt;/span&gt; &lt;span class="bp"&gt;None&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+
+        &lt;span class="c"&gt;#for each page, grab appropriate data&lt;/span&gt;
+        &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;soup&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;find_all&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;div&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;class_&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;result-list _listing-result&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+            &lt;span class="n"&gt;holder&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[]&lt;/span&gt;
+            &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;find_all&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;ul&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;class_&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;attribute-list&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+                &lt;span class="n"&gt;holder&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+            &lt;span class="n"&gt;attrs&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;holder&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+            &lt;span class="n"&gt;price&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;find&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;div&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;class_&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;result-price&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt;
+            &lt;span class="n"&gt;prices&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;price&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+            &lt;span class="n"&gt;address&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;find&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;meta&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)[&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;content&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+            &lt;span class="n"&gt;addresses&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;address&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+        &lt;span class="c"&gt;#find link for next webpage&lt;/span&gt;
+        &lt;span class="n"&gt;next_page&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;soup&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;find&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;a&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;class_&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;next butni&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;href&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;next_page&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;http://www.homes.com&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="n"&gt;next_page&lt;/span&gt;
+        &lt;span class="k"&gt;try&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="c"&gt;#open page and convert it to BeautifulSoup object&lt;/span&gt;
+          &lt;span class="n"&gt;next_page&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;urllib2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;urlopen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;next_page&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+          &lt;span class="n"&gt;soup&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;BeautifulSoup&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;next_page&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="k"&gt;except&lt;/span&gt; &lt;span class="n"&gt;urllib2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;URLError&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;e&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+          &lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="n"&gt;error&lt;/span&gt;           
+        &lt;span class="n"&gt;num&lt;/span&gt;&lt;span class="o"&gt;+=&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;
+        &lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="n"&gt;num&lt;/span&gt; &lt;span class="c"&gt;#keep track while program is running&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;attrs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;prices&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;addresses&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The data as collected is not yet set for running analysis, and quite a bit of clean-up/organizing was necessary. I won't write about the details here, but the cleaned datasets can be found on my github:&lt;/p&gt;
+&lt;p&gt;The housing data contains the following information for each listing: Price, Town, Zipcode, Beds, Baths, Days Listed, Area, Year Built, and Lot Size&lt;/p&gt;
+&lt;p&gt;The apartment rental data contains a bit less information, but includes: Prices, Beds, Baths, Area, and Location&lt;/p&gt;
+&lt;h2&gt;Next Time&lt;/h2&gt;
+&lt;p&gt;I now have two datasets that I can use to test out some linear regression methods in python. In my next post, I will attempt to use these to find a simple relationship between price and area for housing in Nassau County and in Manhattan.&lt;/p&gt;
+&lt;script type="text/javascript"&gt;if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = '//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
+    mathjaxscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: 'center'," +
+        "    displayIndent: '0em'," +
+        "    showMathMenu: true," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'black ! important'} }" +
+        "    } " +
+        "}); ";
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+&lt;/script&gt;</summary></entry><entry><title>Word Search</title><link href="/blog/2014/10/28/word-search/" rel="alternate"></link><updated>2014-10-28T00:00:00-04:00</updated><author><name>Brian Capozzi</name></author><id>tag:,2014-10-28:blog/2014/10/28/word-search/</id><summary type="html">&lt;hr /&gt;
 &lt;h2&gt;Word Search&lt;/h2&gt;
 &lt;p&gt;I thought it might be fun to try and write a program that somehow generates a crossword puzzle (or at least assists in creating one). This seemed like a pretty involved task, so a friend suggested I first start with a much simpler task: creating a word search. I finally got around to implementing this, and the first version can be found on my github at &lt;a href="https://github.com/bcapozzi88/Word_Search"&gt;https://github.com/bcapozzi88/Word_Search&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;This was basically just fun for me, but it got me thinking about how to go about creating and populating a grid with words, while being mindful of potential intersections between words. It also got me to use python's 'random' package for randomly deciding such factors as whether words should appear horizontally or vertically, and whether they should be placed in the grid from start to end or end to start. After placing all the words from the user-defined word-list, the program then fills in the remaining squares with random letters (though I guess to ramp up the difficulty, it should only use letters that appear in the words from the word-list). Once finished, the program then prints the completed word search.&lt;/p&gt;</summary></entry><entry><title>Crossword Puzzles II: Analysis</title><link href="/blog/2014/09/27/crossword-puzzles-ii/" rel="alternate"></link><updated>2014-09-27T00:00:00-04:00</updated><author><name>Brian Capozzi</name></author><id>tag:,2014-09-27:blog/2014/09/27/crossword-puzzles-ii/</id><summary type="html">&lt;style type="text/css"&gt;.clearfix{*zoom:1}.clearfix:before,.clearfix:after{display:table;content:"";line-height:0}
