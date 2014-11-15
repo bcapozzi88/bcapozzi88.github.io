@@ -10,7 +10,7 @@
 
 
 
-<link rel="canonical" href="/blog/2014/09/27/crossword-puzzles-ii/">
+<link rel="canonical" href="http://bcapozzi88.github.io/blog/2014/09/27/crossword-puzzles-ii/">
 
         <meta name="author" content="Brian Capozzi" />
         <meta name="description" content="Last time, we scraped Rex Parker&#39;s New York Times crossword puzzle blog. Now that we&#39;ve collected the information, we can comb through it and see if we can learn anything. In this post, I&#39;m going to make use of pandas to handle the analysis, mostly because it&#39;s a package that I wanted to learn how to use. So, this post serves as both an exploratory analysis of the data collected in the last post and as a walkthrough of simple pandas commands for both cleaning the data and examining it." />
@@ -18,12 +18,14 @@
 
 
     <!-- Bootstrap -->
-        <link rel="stylesheet" href="/theme/css/bootstrap.min.css" type="text/css"/>
-    <link href="/theme/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="http://bcapozzi88.github.io/theme/css/bootstrap.min.css" type="text/css"/>
+    <link href="http://bcapozzi88.github.io/theme/css/font-awesome.min.css" rel="stylesheet">
 
-    <link href="/theme/css/pygments/default.css" rel="stylesheet">
-    <link rel="stylesheet" href="/theme/css/style.css" type="text/css"/>
+    <link href="http://bcapozzi88.github.io/theme/css/pygments/default.css" rel="stylesheet">
+    <link rel="stylesheet" href="http://bcapozzi88.github.io/theme/css/style.css" type="text/css"/>
 
+        <link href="http://bcapozzi88.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Brian Capozzi ATOM Feed"/>
 
 </head>
 <body>
@@ -37,23 +39,23 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a href="/" class="navbar-brand">
+            <a href="http://bcapozzi88.github.io/" class="navbar-brand">
 Brian Capozzi            </a>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                         <li><a href="/pages/about-me.html">
+                         <li><a href="http://bcapozzi88.github.io/pages/about-me.html">
                              About Me
                           </a></li>
                         <li class="active">
-                            <a href="/category/data-posts.html">Data posts</a>
+                            <a href="http://bcapozzi88.github.io/category/data-posts.html">Data posts</a>
                         </li>
                         <li >
-                            <a href="/category/fun-and-games.html">Fun and games</a>
+                            <a href="http://bcapozzi88.github.io/category/fun-and-games.html">Fun and games</a>
                         </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archives</span></a></li>
+                <li><a href="http://bcapozzi88.github.io/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archives</span></a></li>
             </ul>
         </div>
         <!-- /.navbar-collapse -->
@@ -75,7 +77,7 @@ Brian Capozzi            </a>
         <article>
             <header class="page-header">
                 <h1>
-                    <a href="/blog/2014/09/27/crossword-puzzles-ii/"
+                    <a href="http://bcapozzi88.github.io/blog/2014/09/27/crossword-puzzles-ii/"
                        rel="bookmark"
                        title="Permalink to Crossword Puzzles II: Analysis">
                         Crossword Puzzles II: Analysis
@@ -2828,7 +2830,7 @@ In [22]:
 
 
 
-                <li class="list-group-item"><a href="/"><h4><i class="fa fa-tags fa-lg"></i><span class="icon-label">Tags</span></h4></a>
+                <li class="list-group-item"><a href="http://bcapozzi88.github.io/"><h4><i class="fa fa-tags fa-lg"></i><span class="icon-label">Tags</span></h4></a>
                     <ul class="list-group " id="tags">
                     </ul>
                 </li>    
@@ -2875,13 +2877,30 @@ In [22]:
       </div>
    </div>
 </footer>
-<script src="/theme/js/jquery.min.js"></script>
+<script src="http://bcapozzi88.github.io/theme/js/jquery.min.js"></script>
 
 <!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="/theme/js/bootstrap.min.js"></script>
+<script src="http://bcapozzi88.github.io/theme/js/bootstrap.min.js"></script>
 
 <!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
-<script src="/theme/js/respond.min.js"></script>
+<script src="http://bcapozzi88.github.io/theme/js/respond.min.js"></script>
 
+    <!-- Google Analytics -->
+    <script type="text/javascript">
+
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-55245722-1']);
+        _gaq.push(['_trackPageview']);
+
+        (function () {
+            var ga = document.createElement('script');
+            ga.type = 'text/javascript';
+            ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+    <!-- End Google Analytics Code -->
 </body>
 </html>
