@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en"
+>
+<head>
+    <title>Linear Regression & Housing Prices II - Brian Capozzi</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+<link rel="canonical" href="http://bcapozzi88.github.io/blog/2014/11/16/linear-regression-and-housing-prices-ii/">
+
+        <meta name="author" content="Brian Capozzi" />
+        <meta name="description" content="Here, I play around with multiple ways of applying a linear regression model (i.e. fitting data with some curve) to the housing prices datasets collected in the previous post." />
+
+
+
+    <!-- Bootstrap -->
+        <link rel="stylesheet" href="http://bcapozzi88.github.io/theme/css/bootstrap.min.css" type="text/css"/>
+    <link href="http://bcapozzi88.github.io/theme/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="http://bcapozzi88.github.io/theme/css/pygments/default.css" rel="stylesheet">
+    <link rel="stylesheet" href="http://bcapozzi88.github.io/theme/css/style.css" type="text/css"/>
+
+        <link href="http://bcapozzi88.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Brian Capozzi ATOM Feed"/>
+
+</head>
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="http://bcapozzi88.github.io/" class="navbar-brand">
+Brian Capozzi            </a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                         <li><a href="http://bcapozzi88.github.io/pages/about-me.html">
+                             About Me
+                          </a></li>
+                        <li class="active">
+                            <a href="http://bcapozzi88.github.io/category/data-posts.html">Data posts</a>
+                        </li>
+                        <li >
+                            <a href="http://bcapozzi88.github.io/category/fun-and-games.html">Fun and games</a>
+                        </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="http://bcapozzi88.github.io/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archives</span></a></li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+
+<!--     <div class="container-fluid">
+<div class="jumbotron">
+    <h1></h1>
+    <p></p>
+</div>
+</div> -->
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9">
+
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="http://bcapozzi88.github.io/blog/2014/11/16/linear-regression-and-housing-prices-ii/"
+                       rel="bookmark"
+                       title="Permalink to Linear Regression & Housing Prices II">
+                        Linear Regression & Housing Prices II
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2014-11-16T00:00:00"> Sun 16 November 2014</time>
+    </span>
+
+
+
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <hr />
+<p>In my last post, I presented a quick overview of linear regression, and then set out to collect housing data in order to test whether a linear relation exists between the asking price of a house and its size. Here, I'll provide a few methods of applying such a linear model to the data.</p>
+<h2>Implementing a normal equations method in python</h2>
+<p>In my overview of linear regression last time, I forgot to mention that the model parameters can also be determined by solving so-called <strong>normal equations</strong> of the form:
+<div class="math">$$\theta = (X^T X)^{-1} X^T \vec{y} $$</div>
+Here, <span class="math">\(X\)</span> is a matrix of all of the feature values of all the training examples, and y is avector of all the training example "answers". Derivations of the above equation can be found <a href="http://cs229.stanford.edu/notes/cs229-notes1.pdf">here</a> and on <a href="http://en.wikipedia.org/wiki/Linear_least_squares_(mathematics)#Derivation_of_the_normal_equations">wikipedia</a>. This equation provides an alternative means of applying linear regression (without needing a learning parameter, <span class="math">\(\alpha\)</span>, and (as per Andrew Ng's Machine Learning course) is well suited for problems that don't have too many training examples (&lt;100,000).</p>
+<p>Writing a function in python to carry out the above math can easily be done using numpy:</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="k">def</span> <span class="nf">linReg_NormEq</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="sd">&#39;&#39;&#39;Given array-like x and y data, returns theta which minimizes the least squares error when performing linear regression on y. The features, x, must be an m-by-n matrix, where m is the number of training examples, and n is the number of features. The n=1 feature is generally set to 1.</span>
+<span class="sd">&#39;&#39;&#39;</span>
+    <span class="n">x_trans</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">xT_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x_trans</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">xT_x</span><span class="p">),</span> <span class="n">x_trans</span><span class="p">)</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">theta</span>
+</pre></div>
+
+
+<p>We can first test this function out by generating some fake random data to fit.</p>
+<div class="highlight"><pre><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span> <span class="c">#generate 50 evenly space points between 0 &amp; 10</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span> <span class="c">#generate 50 evenly space points between 0 &amp; 20</span>
+<span class="n">noisy_y</span> <span class="o">=</span> <span class="n">y</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">b</span><span class="p">))</span> <span class="c">#add noise to y</span>
+</pre></div>
+
+
+<p>Our x data needs to be a two-column matrix, where for each training example, the first value is set to 1 by convention, and the second is the feature value. In the language of the last post, we have a <span class="math">\(\theta_0\)</span> parameter which is associated with an <span class="math">\(x_0\)</span> feature for convenience (hence setting all <span class="math">\(x_0\)</span>'s to 1).</p>
+<div class="highlight"><pre><span class="n">a2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="mi">2</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)):</span>
+    <span class="n">a2</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span>
+    <span class="n">a2</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+</pre></div>
+
+
+<p>Now, applying our function, we can fit a line to the data:</p>
+<div class="highlight"><pre><span class="n">fit_coefs</span> <span class="o">=</span> <span class="n">linReg_NormEq</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">noisy_b</span><span class="p">)</span> <span class="c">#find fit parameters</span>
+<span class="n">fit_line</span> <span class="o">=</span> <span class="n">fit_coefs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">fit_coefs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">a</span> <span class="c">#plot line based on parameters</span>
+</pre></div>
+
+
+<p>Plotting the resulting line on top of the data, we see that the function works nicely!</p>
+<p><img alt="Random Data" src="/images/111614_RandomTest.png" width="400" height="400"></p>
+<h2>Linear Regression on Housing Data</h2>
+<p>We can now perform linear regression on the data scraped from the last post using our function and a couple of functions already available in different python libraries. We can load the .csvs from my <a href="https://github.com/bcapozzi88/Housing_Prices">github</a> into pandas DataFrames.</p>
+<p>I'll start by looking at the Nassau_prices_clean file, and we will examine the relationship between the asking price and the square foot-age of the house. While this dataset has almost 7000 entries, not all of them have asking prices and area. To start, we'll trim down the dataframe to only have entries with both values:</p>
+<div class="highlight"><pre><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s">&#39;Sqft&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">notnull</span><span class="p">()]</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s">&#39;Price&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">notnull</span><span class="p">()]</span>
+</pre></div>
+
+
+<p>Taking a quick look at the resulting data, we can see that there are definitely some points that are outliers, and we can see that some of the data points look a bit weird. </p>
+<p><img alt="All Data" src="/images/111614_NassauDataAll.png" width="400" height="400"></p>
+<p>To focus in on the region where the data could be more or less linear, I am going to (somewhat arbitrarily ignore all houses that have an area of over 7000 <span class="math">\(ft^2\)</span>. Again, this can be done with one line of code using pandas:</p>
+<div class="highlight"><pre><span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s">&#39;Sqft&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">7000</span><span class="p">]</span>
+</pre></div>
+
+
+<p>We are left with almost 1800 training examples, and looking again at the data, we see that a linear fit could indeed fit the data quite well.</p>
+<p><img alt="Data Cut Out" src="/images/111614_NassauDataSqft.png" width="400" height="400"></p>
+<p><a href="http://www.scipy.org">Scipy</a>, a library for scientific computing in python, contains a stats package which has a linear regression method. We can apply it as follows:</p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
+<span class="n">slope</span><span class="p">,</span> <span class="n">intercept</span><span class="p">,</span> <span class="n">r_value</span><span class="p">,</span> <span class="n">p_value</span><span class="p">,</span> <span class="n">std_err</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">linregress</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s">&#39;Sqft&#39;</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s">&#39;Price&#39;</span><span class="p">])</span>
+</pre></div>
+
+
+<p>The slope and intercept values are the <span class="math">\(\theta_0\)</span> and <span class="math">\(\theta_1\)</span> parameters we have previously discussed, while r_value, p_value, std_err are various metrics for how well the fit does at capturing the data. Using the slope and intercept values, we can generate the fit line, and overlay it on top of the data to see how things looks.</p>
+<p><img alt="Scipy Fit" src="/images/111614_NassauData_Scipy.png" width="400" height="400"></p>
+<p>We can also use <a href="http://scikit-learn.org/stable/">scikit-learn</a>, a machine learning library for python, to perform the linear regression.</p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">linear_model</span>
+<span class="n">xx</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">Sqft</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">df</span><span class="o">.</span><span class="n">Sqft</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="c">#prepare feature input</span>
+<span class="n">regr</span> <span class="o">=</span> <span class="n">linear_model</span><span class="o">.</span><span class="n">LinearRegression</span><span class="p">()</span> <span class="c">#initiate linear regression model</span>
+<span class="n">regr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">Price</span><span class="p">)</span> <span class="c">#perform the fit</span>
+<span class="n">predict_y</span> <span class="o">=</span> <span class="n">regr</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">xx</span><span class="p">)</span> <span class="c">#generate output values based on fit parameters</span>
+<span class="k">print</span> <span class="n">regr</span><span class="o">.</span><span class="n">coef_</span> <span class="c">#print slope value</span>
+<span class="k">print</span> <span class="n">regr</span><span class="o">.</span><span class="n">intercept_</span> <span class="c">#print intercept value</span>
+</pre></div>
+
+
+<p>We can again look at an overlay of the fit on top of the data to see that the linear regression method in scikit-learn does produces exactly the same output as the linear regression function in scipy.</p>
+<div class="highlight"><pre><span class="c">#Generate plot of fit and data</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">Sqft</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">Price</span><span class="p">,</span>  <span class="n">color</span><span class="o">=</span><span class="s">&#39;blue&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&#39;Data&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">Sqft</span><span class="p">,</span> <span class="n">regr</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">xx</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s">&#39;black&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s">&#39;Fit&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span> <span class="p">(</span><span class="s">&#39;Asking Price ($)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&#39;House Area (Sq. ft.)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">7000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">2.5e6</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span><span class="mf">0.75</span><span class="p">))</span>
+</pre></div>
+
+
+<p><img alt="Skikit-Learn Fit" src="/images/111614_NassauData_Scikit.png" width="400" height="400"></p>
+<p>Finally, we can compare the coefficient outputs of the scipy, scikit-learn, and our normal equation function (which gives a different output than the other two):</p>
+<p><img alt="Fit Data" src="/images/111614_FitData.png" width="400" height="300"></p>
+<p>It seems as though the normal equations function gives the best looking fit to the data (see below), though I'm not quite sure why this happens.</p>
+<p><img alt="All fits" src="/images/111614_NassauData_NormEq.png" width="400" height="400"></p>
+<h2>Wrap Up</h2>
+<p>In all of the above plots, there is clearly a lot of variablility in the data, and it is not completely captured by a straight line. There are other features, such as lot size and neighborhood, which I have omitted for simplicity and which certainly have an impact on how much a house is worth.  Perhaps creating a multivariable linear regression using the other parameters would provide a better way to model the data. Also, while there is also a data set in my github containing manhattan apartment rent prices, I decided against applying the same analysis as it is probably unnecessarily repetitive (a linear model for apartment rent versus apartment area is just as good as one for the housing data).</p>
+<script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = '//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
+    mathjaxscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: 'center'," +
+        "    displayIndent: '0em'," +
+        "    showMathMenu: true," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'black ! important'} }" +
+        "    } " +
+        "}); ";
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script>
+            </div>
+            <!-- /.entry-content -->
+        </article>
+    </section>
+
+        </div>
+        <div class="col-sm-3 well well-sm" id="sidebar">
+
+<aside>
+    <section>
+        <ul class="list-group list-group-flush">
+
+
+
+                <li class="list-group-item"><a href="http://bcapozzi88.github.io/"><h4><i class="fa fa-tags fa-lg"></i><span class="icon-label">Tags</span></h4></a>
+                    <ul class="list-group " id="tags">
+                    </ul>
+                </li>    
+    <li class="list-group-item"><h4><i class="fa fa-external-link-square fa-lg"></i><span class="icon-label">Links</span></h4>
+      <ul class="list-group" id="links">
+        <li class="list-group-item">
+            <a href="http://www.linkedin.com/in/bcapozzi" target="_blank">
+                LinkedIn
+            </a>
+        </li>
+        <li class="list-group-item">
+            <a href="http://scholar.google.com/citations?hl=en&user=c7drUDYAAAAJ" target="_blank">
+                Google Scholar Profile
+            </a>
+        </li>
+        <li class="list-group-item">
+            <a href="http://www.columbia.edu/~lv2117" target="_blank">
+                Research Group Page
+            </a>
+        </li>
+        <li class="list-group-item">
+            <a href="https://github.com/bcapozzi88" target="_blank">
+                Github
+            </a>
+        </li>
+      </ul>
+    </li>
+
+        </ul>
+    </section>
+
+</aside>        </div>
+    </div>
+</div>
+<footer>
+   <div class="container">
+      <hr>
+      <div class="row">
+         <div class="col-xs-10">&copy; 2014 Brian Capozzi
+            &middot; Powered by <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
+            <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
+            <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
+         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p></div>
+      </div>
+   </div>
+</footer>
+<script src="http://bcapozzi88.github.io/theme/js/jquery.min.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="http://bcapozzi88.github.io/theme/js/bootstrap.min.js"></script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="http://bcapozzi88.github.io/theme/js/respond.min.js"></script>
+
+    <!-- Google Analytics -->
+    <script type="text/javascript">
+
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-55245722-1']);
+        _gaq.push(['_trackPageview']);
+
+        (function () {
+            var ga = document.createElement('script');
+            ga.type = 'text/javascript';
+            ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+    <!-- End Google Analytics Code -->
+</body>
+</html>
