@@ -2,7 +2,7 @@
 <html lang="en"
 >
 <head>
-    <title>Word Search - Brian Capozzi</title>
+    <title>Linear Regression & Housing Prices II - Brian Capozzi</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -10,10 +10,10 @@
 
 
 
-<link rel="canonical" href="http://bcapozzi.com/blog/2014/10/28/word-search/">
+<link rel="canonical" href="http://bcapozzi.com/blog/2014/11/15/linear-regression-and-housing-prices-ii/">
 
         <meta name="author" content="Brian Capozzi" />
-        <meta name="description" content="A simple program for creating a word search grid." />
+        <meta name="description" content="Here, I play around with multiple ways of applying a linear regression model (i.e. fitting data with some curve) to the housing prices datasets collected in the previous post." />
 
 
 
@@ -47,10 +47,10 @@ Brian Capozzi            </a>
                          <li><a href="http://bcapozzi.com/pages/about-me.html">
                              About Me
                           </a></li>
-                        <li >
+                        <li class="active">
                             <a href="http://bcapozzi.com/category/data-posts.html">Data posts</a>
                         </li>
-                        <li class="active">
+                        <li >
                             <a href="http://bcapozzi.com/category/fun-and-games.html">Fun and games</a>
                         </li>
             </ul>
@@ -77,10 +77,10 @@ Brian Capozzi            </a>
         <article>
             <header class="page-header">
                 <h1>
-                    <a href="http://bcapozzi.com/blog/2014/10/28/word-search/"
+                    <a href="http://bcapozzi.com/blog/2014/11/15/linear-regression-and-housing-prices-ii/"
                        rel="bookmark"
-                       title="Permalink to Word Search">
-                        Word Search
+                       title="Permalink to Linear Regression & Housing Prices II">
+                        Linear Regression & Housing Prices II
                     </a>
                 </h1>
             </header>
@@ -90,7 +90,7 @@ Brian Capozzi            </a>
 <footer class="post-info">
     <span class="label label-default">Date</span>
     <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2014-10-28T00:00:00"> Tue 28 October 2014</time>
+        <i class="fa fa-calendar"></i><time datetime="2014-11-15T00:00:00"> Sat 15 November 2014</time>
     </span>
 
 
@@ -99,9 +99,49 @@ Brian Capozzi            </a>
 </footer><!-- /.post-info -->                    </div>
                 </div>
                 <hr />
-<h2>Word Search</h2>
-<p>I thought it might be fun to try and write a program that somehow generates a crossword puzzle (or at least assists in creating one). This seemed like a pretty involved task, so a friend suggested I first start with a much simpler task: creating a word search. I finally got around to implementing this, and the first version can be found on my github at <a href="https://github.com/bcapozzi88/Word_Search">https://github.com/bcapozzi88/Word_Search</a>.</p>
-<p>This was basically just fun for me, but it got me thinking about how to go about creating and populating a grid with words, while being mindful of potential intersections between words. It also got me to use python's 'random' package for randomly deciding such factors as whether words should appear horizontally or vertically, and whether they should be placed in the grid from start to end or end to start. After placing all the words from the user-defined word-list, the program then fills in the remaining squares with random letters (though I guess to ramp up the difficulty, it should only use letters that appear in the words from the word-list). Once finished, the program then prints the completed word search.</p>
+<p>In my last post, I presented a quick overview of linear regression, and then set out to collect housing data in order to test whether a linear relation exists between the asking price of a house and its size. Here, I'll provide a few methods of applying such a linear model to the data.</p>
+<h2>Implementing a normal equations method in python</h2>
+<p>In my overview of linear regression last time, I forgot to mention that the model parameters can also be determined by solving so-called <strong>normal equations</strong> of the form:
+<div class="math">$$\theta = (X^T X)^-1 X^T \vec{y} $$</div>
+Here, <span class="math">\(X\)</span> is a matrix of all of the feature values of all the training examples, and y is avector of all the training example "answers". Derivations of the above equation can be found <a href="http://cs229.stanford.edu/notes/cs229-notes1.pdf">here</a> and on <a href="http://en.wikipedia.org/wiki/Linear_least_squares_(mathematics)#Derivation_of_the_normal_equations">wikipedia</a>. This equation provides an alternative means of applying linear regression (without needing a learning parameter, <span class="math">\(\alpha\)</span>, and is well suited for problems that don't have too many training examples (&lt;100,000).</p>
+<p>Writing a function in python to carry out the above math can easily be done using numpy:</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="k">def</span> <span class="nf">linReg_NormEq</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="n">x_trans</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">xT_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x_trans</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">xT_x</span><span class="p">),</span> <span class="n">x_trans</span><span class="p">)</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">theta</span>
+</pre></div>
+
+
+<script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = '//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
+    mathjaxscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: 'center'," +
+        "    displayIndent: '0em'," +
+        "    showMathMenu: true," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'black ! important'} }" +
+        "    } " +
+        "}); ";
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script>
             </div>
             <!-- /.entry-content -->
         </article>
